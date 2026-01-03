@@ -2,7 +2,8 @@ food/
 mnt/
 Source/.build/
 .build/
-queryRoot/query.swift
-queryRoot/query
-loadxml2mnt
-fuseMount
+loadxml
+queryRoot/foodinfo/nutrients/query
+queryRoot/foodinfo/nutrients/query.swift
+queryRoot/foodinfo/searchfood/query
+queryRoot/foodinfo/searchfood/query.swift
