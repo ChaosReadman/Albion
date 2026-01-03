@@ -37,4 +37,6 @@ http://localhost:5000/foodinfo/searchfood?foodname=ぶどう
 
 http://localhost:5000/foodinfo/nutrients?id=14028
 
+http://localhost:5000/mnt/getbooks?price=0
+
 各々のリクエスト先にあるqueryRoot/searchfood/query.xqyとqueryRoot/nutrients/query.xqyからswiftコードが自動生成され、コンパイルされ、実行され、その結果がブラウザに表示されます。

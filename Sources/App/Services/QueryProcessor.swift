@@ -160,7 +160,7 @@ struct QueryProcessor {
         let loopVar = String(flworBody[forVarRange])
 
         debugLog("Transpiling: Extracting clauses...")
-        let whereRegex = try NSRegularExpression(pattern: #"where\s+([\s\S]+?)\s+order by"#)
+        let whereRegex = try NSRegularExpression(pattern: #"where\s+([\s\S]+?)\s+(?:order by|return)"#)
         let whereClause = whereRegex.firstMatch(in: flworBody, options: [], range: flworBodyNSRange).flatMap {
             Range($0.range(at: 1), in: flworBody).map { String(flworBody[$0]) }
         } ?? "true"
@@ -180,11 +180,15 @@ struct QueryProcessor {
         // Helper to convert XQuery expressions to Swift
         func convertCommon(_ expr: String) -> String {
             var s = expr
+            // 型キャスト (xs:int($var) -> (Int($var) ?? 0))
+            s = s.replacingOccurrences(of: "xs:int\\(([^)]+)\\)", with: "(Int($1) ?? 0)", options: .regularExpression)
+            s = s.replacingOccurrences(of: "xs:double\\(([^)]+)\\)", with: "(Double($1) ?? 0.0)", options: .regularExpression)
+            s = s.replacingOccurrences(of: "xs:string\\(([^)]+)\\)", with: "String($1)", options: .regularExpression)
             // 関数名前空間の除去 (se:hirakata -> hirakata)
             s = s.replacingOccurrences(of: "([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)\\(", with: "$2(", options: .regularExpression)
             // ループ変数のパス変換 ($food/NAME -> val(path, "NAME"))
-            s = s.replacingOccurrences(of: "\\$\(loopVar)/([A-Z0-9_-]+)", with: #"val(path, "$1")"#, options: .regularExpression)
-            s = s.replacingOccurrences(of: "\\$\(loopVar)/@([A-Z0-9_-]+)", with: #"attr(path, "$1")"#, options: .regularExpression)
+            s = s.replacingOccurrences(of: "\\$\(loopVar)/([a-zA-Z0-9_-]+)", with: #"val(path, "$1")"#, options: .regularExpression)
+            s = s.replacingOccurrences(of: "\\$\(loopVar)/@([a-zA-Z0-9_-]+)", with: #"attr(path, "$1")"#, options: .regularExpression)
             // その他の変数 ($var -> var)
             s = s.replacingOccurrences(of: "\\$([a-zA-Z0-9_]+)", with: "$1", options: .regularExpression)
             return s
@@ -233,6 +237,19 @@ struct QueryProcessor {
         
         // XPathのパスセグメントを抽出 (//FOODS/FOOD -> ["FOODS", "FOOD"])
         let pathSegments = xpathQuery.replacingOccurrences(of: "//", with: "/").split(separator: "/").map { "\"\($0)\"" }.joined(separator: ", ")
+
+        var sortCode = ""
+        if !swiftOrder.isEmpty {
+            let v1 = swiftOrder.replacingOccurrences(of: "path", with: "$0")
+            let v2 = swiftOrder.replacingOccurrences(of: "path", with: "$1")
+            sortCode = """
+            filteredPaths.sort { 
+                let v1 = \(v1)
+                let v2 = \(v2)
+                return v1 < v2
+            }
+            """
+        }
 
         let template = #"""
         import Foundation
@@ -370,11 +387,7 @@ struct QueryProcessor {
             }
         }
         
-        filteredPaths.sort { 
-            let v1 = \#(swiftOrder.replacingOccurrences(of: "element", with: "$0").replacingOccurrences(of: "path", with: "$0"))
-            let v2 = \#(swiftOrder.replacingOccurrences(of: "element", with: "$1").replacingOccurrences(of: "path", with: "$1"))
-            return v1 < v2
-        }
+        \#(sortCode)
         
         print("""
 \#(staticHeader)

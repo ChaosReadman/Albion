@@ -1,6 +1,8 @@
 <books>
     <author birthplace="Aomori" name="太宰治">
-        <book title="人間失格" price="100"/><book title="走れメロス" price="90"/></author>
+        <book title="人間失格" price="100"/>
+        <book title="走れメロス" price="90"/>
+    </author>
     <author name="尾崎紅葉">
         <book title="金色夜叉" price="200"/>
     </author>
