@@ -1,0 +1,8 @@
+food/
+mnt/
+Source/.build/
+.build/
+queryRoot/query.swift
+queryRoot/query
+loadxml2mnt
+fuseMount

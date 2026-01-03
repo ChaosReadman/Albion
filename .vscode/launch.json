@@ -1,0 +1,44 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": false,
+      "cwd": "/home/t_oku/xmldrive",
+      "program": "/home/t_oku/xmldrive/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:Albion}",
+      "name": "Debug Run",
+      "target": "Run",
+      "configuration": "debug",
+      "preLaunchTask": "swift: Build Debug Run"
+    },
+    {
+      "type": "swift",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:Albion}",
+      "name": "Release Run",
+      "target": "Run",
+      "configuration": "release",
+      "preLaunchTask": "swift: Build Release Run"
+    }
+  ]
+}
