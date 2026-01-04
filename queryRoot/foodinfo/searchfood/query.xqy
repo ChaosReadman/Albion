@@ -1,11 +1,11 @@
-declare function se:hirakata($a as xs:string*) as xs:string external;
+declare function xs:hirakata($a as xs:string*) as xs:string external;
 
 
 <DATA TYPE='JSON' OUTPATH="//DATA/FOODS" FORCEARRAY="//FOODS/FOOD">
   <FOODS>
 {
 (:PARAMS:)
-let $searchstr := se:hirakata($foodname)
+let $searchstr := xs:hirakata($foodname)
 
 for $food in doc('food')//FOODS/FOOD
 where contains($food/SEARCH_NAME,$searchstr) or contains($food/ADDITIONAL,$searchstr) or $food/@FOOD_ID=$searchstr or
@@ -14,10 +14,10 @@ order by $food/@FOOD_ID
 return
     <FOOD>
       <FOOD_ID>{$food/@FOOD_ID/string()}</FOOD_ID>
-      {$food/JP_NAME}
-      {$food/JP_DISP_NAME}
-      {$food/SEARCH_NAME}
-      {$food/ADDITIONAL}
+      <JP_NAME>{$food/JP_NAME}</JP_NAME>
+      <JP_DISP_NAME>{$food/JP_DISP_NAME}</JP_DISP_NAME>
+      <SEARCH_NAME>{$food/SEARCH_NAME}</SEARCH_NAME>
+      <ADDITIONAL>{$food/ADDITIONAL}</ADDITIONAL>
     </FOOD>
 }
   </FOODS>

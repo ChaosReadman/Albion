@@ -1,9 +1,8 @@
 food/
 mnt/
+wiki/
 Source/.build/
 .build/
 loadxml
-queryRoot/foodinfo/nutrients/query
-queryRoot/foodinfo/nutrients/query.swift
-queryRoot/foodinfo/searchfood/query
-queryRoot/foodinfo/searchfood/query.swift
+query
+query.swift
